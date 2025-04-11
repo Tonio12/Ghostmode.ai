@@ -1,9 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, Lora } from "next/font/google";
 import "./globals.css";
-import { Header } from "@/components/Header";
 import { ThemeProvider } from "@/components/theme-provider";
-import Footer from "@/components/Footer";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -37,9 +35,7 @@ export default function RootLayout({
             defaultTheme="system"
             enableSystem
             disableTransitionOnChange>
-          <Header />
           {children}
-          <Footer />
         </ThemeProvider>
       </body>
     </html>
