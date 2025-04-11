@@ -41,52 +41,65 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
-}
+  --animate-pulse: pulse var(--duration) ease-out infinite;
+  @keyframes pulse {
+  0%, 100% {
+    boxShadow: 0 0 0 0 var(--pulse-color);
+    }
+  50% {
+    boxShadow: 0 0 0 8px var(--pulse-color);
+    }
+  }
+  --animate-gradient: gradient 8s linear infinite
+;
+  @keyframes gradient {
+  to {
+    backgroundPosition: var(--bg-size, 300%) 0;}}}
 
 :root {
   --radius: 0.625rem;
-  
+
   /* Base colors */
   --background: #ffffff;
   --foreground: #2d3748;
-  
+
   /* Card and Popover */
   --card: #ffffff;
   --card-foreground: #2d3748;
   --popover: #ffffff;
   --popover-foreground: #2d3748;
-  
+
   /* Primary colors */
   --primary: #a2d2ff;
   --primary-foreground: #1a365d;
-  
+
   /* Secondary colors */
   --secondary: #bde0fe;
   --secondary-foreground: #2c5282;
-  
+
   /* Muted colors */
   --muted: #f7fafc;
   --muted-foreground: #4a5568;
-  
+
   /* Accent colors */
   --accent: #ffafcc;
   --accent-foreground: #702459;
-  
+
   /* Destructive */
   --destructive: #ff6b6b;
-  
+
   /* Borders and inputs */
   --border: #cdb4db;
   --input: #e2e8f0;
   --ring: #bde0fe;
-  
+
   /* Chart colors */
   --chart-1: #a2d2ff;
   --chart-2: #bde0fe;
   --chart-3: #ffafcc;
   --chart-4: #ffc8dd;
   --chart-5: #cdb4db;
-  
+
   /* Sidebar */
   --sidebar: #ffffff;
   --sidebar-foreground: #2d3748;
@@ -102,44 +115,44 @@
   /* Base colors */
   --background: #1a1a2e;
   --foreground: #ffffff;
-  
+
   /* Card and Popover */
   --card: #242438;
   --card-foreground: #ffffff;
   --popover: #242438;
   --popover-foreground: #ffffff;
-  
+
   /* Primary colors */
   --primary: #a2d2ff;
   --primary-foreground: #ffffff;
-  
+
   /* Secondary colors */
   --secondary: #bde0fe;
   --secondary-foreground: #ffffff;
-  
+
   /* Muted colors */
   --muted: #2a2a42;
   --muted-foreground: #a0aec0;
-  
+
   /* Accent colors */
   --accent: #ffafcc;
   --accent-foreground: #ffffff;
-  
+
   /* Destructive */
   --destructive: #ff6b6b;
-  
+
   /* Borders and inputs */
   --border: #cdb4db50;
   --input: #2a2a42;
   --ring: #bde0fe50;
-  
+
   /* Chart colors */
   --chart-1: #a2d2ff;
   --chart-2: #bde0fe;
   --chart-3: #ffafcc;
   --chart-4: #ffc8dd;
   --chart-5: #cdb4db;
-  
+
   /* Sidebar */
   --sidebar: #242438;
   --sidebar-foreground: #ffffff;
@@ -162,33 +175,42 @@
   h1, h2, h3, h4, h5, h6 {
     @apply font-heading font-medium tracking-tight;
   }
-  
+
   h1 {
     @apply text-4xl leading-tight md:text-5xl lg:text-6xl mb-6;
   }
-  
+
   h2 {
     @apply text-3xl leading-tight md:text-4xl lg:text-5xl mb-5;
   }
-  
+
   h3 {
     @apply text-2xl leading-tight md:text-3xl lg:text-4xl mb-4;
   }
-  
+
   h4 {
     @apply text-xl leading-tight md:text-2xl lg:text-3xl mb-4;
   }
-  
+
   h5 {
     @apply text-lg leading-tight md:text-xl lg:text-2xl mb-3;
   }
-  
+
   h6 {
     @apply text-base leading-tight md:text-lg lg:text-xl mb-3;
   }
-  
+
   /* Paragraph */
   p {
     @apply mb-4 leading-relaxed;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
   }
 }

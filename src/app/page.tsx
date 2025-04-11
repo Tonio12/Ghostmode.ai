@@ -1,10 +1,51 @@
+import Image from 'next/image';
+import { DotPattern } from '@/components/magicui/dot-pattern';
+import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
+import { AnimatedGradientText } from '@/components/magicui/animated-gradient-text';
+
+
 const Home = () => {
   return (
-    <div>
-      <h1>Hello World</h1>
-      <p>This is a test</p>
-    </div>
-  )
-}
+    <main className="flex flex-col justify-between items-center h-screen p-8 relative bg-background text-foreground">
+      <div className="absolute inset-0 w-full h-full">
+        <DotPattern
+          className={cn(
+            "opacity-30 text-muted-foreground",
+            "[mask-image:radial-gradient(800px_circle_at_center,white,transparent)]"
+          )}
+          glow={true}
+        />
+      </div>
+      <div className="flex flex-col items-center justify-center text-center max-w-3xl mx-auto z-10 relative h-screen">
+        <div className="mb-6">
+          <Image 
+            src="/images/Logo.png" 
+            alt="Ghostmode Logo" 
+            width={80} 
+            height={80} 
+            className="mx-auto rounded-lg shadow-lg"
+          />
+        </div>
+        <h1 className="font-bold mb-6">
+          Set Boundaries, Not Fires
+        </h1>
+        <p className="text-xl text-muted-foreground max-w-2xl">
+          Let <AnimatedGradientText>Ghostmode.ai</AnimatedGradientText> gently delay or auto-reply to messages when you&apos;re overwhelmed. No guilt. Just space to breathe.
+        </p>
+        <Button className="mt-6 text-lg">Get Started</Button>
+      </div>
+      <div className="absolute bottom-24 right-32 z-0">
+        <Image 
+          src="/images/integrations.png" 
+          alt="Integrations" 
+          width={180} 
+          height={180} 
+          className="animate-bounce animate-duration-2000 animate-infinite"
+        />
+      </div>
+    </main>
+  );
+};
 
-export default Home
+export default Home;
