@@ -1,1 +1,1 @@
-export { auth as middleware } from "@root/auth" 
+export { auth as middleware } from "@/auth" 
