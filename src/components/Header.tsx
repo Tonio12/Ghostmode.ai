@@ -11,9 +11,8 @@ import { ModeToggle } from './mode-toggle';
 
 export function Header() {
   return (
-    <header className="w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-16 items-center justify-between">
-        <div className="flex items-center gap-2">
+    <header className="w-full h-16 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 flex justify-between items-center px-16">
+        <div className="flex items-center gap-2 w-1/3">
           <Link href="/" className="flex items-center gap-2">
             <Image 
               src="/images/Logo.png" 
@@ -26,7 +25,7 @@ export function Header() {
           </Link>
         </div>
         
-        <div className="hidden md:block">
+        <div className="hidden md:flex justify-center w-1/3">
           <Menubar className="border-none shadow-none bg-transparent">
             <MenubarMenu>
               <MenubarTrigger className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
@@ -51,14 +50,13 @@ export function Header() {
           </Menubar>
         </div>
         
-        <div className="flex items-center gap-4">
-            <ModeToggle />
+        <div className="flex items-center gap-4 justify-end w-1/3">
+          <ModeToggle />
           <Button variant="ghost" className="text-sm font-medium">
             Login
-            <ArrowRight />
+            <ArrowRight className="ml-2 h-4 w-4" />
           </Button>
         </div>
-      </div>
     </header>
   );
 } 
