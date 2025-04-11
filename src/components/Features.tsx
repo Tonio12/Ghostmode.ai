@@ -2,9 +2,7 @@ import {
   MessageSquare, 
   Shield, 
   Clock, 
-  MessageCircle, 
-  Timer 
-} from 'lucide-react';
+  MessageCircle} from 'lucide-react';
 
 const features = [
   {
@@ -31,17 +29,11 @@ const features = [
       'Get AI suggestions to improve your message tone. Paste your draft and get suggestions like "Make this sound more confident" or "Soften this a little".',
     icon: MessageCircle,
   },
-  {
-    name: 'Ghostmode Timer',
-    description:
-      'Set a timer for Do Not Disturb mode with AI handling replies. Hit the button, go into Ghostmode, and let AI handle your messages.',
-    icon: Timer,
-  },
 ]
 
 export default function Features() {
   return (
-    <div className="bg-background py-24 sm:py-32">
+    <section id="features" className="bg-background py-24 sm:py-32">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto max-w-2xl lg:text-center">
           <h2 className="text-base/7 font-semibold text-accent">Set Healthy Boundaries</h2>
@@ -69,6 +61,6 @@ export default function Features() {
           </dl>
         </div>
       </div>
-    </div>
+    </section>
   )
 }

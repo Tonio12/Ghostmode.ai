@@ -29,22 +29,12 @@ export function Header() {
           <Menubar className="border-none shadow-none bg-transparent">
             <MenubarMenu>
               <MenubarTrigger className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
-                Features
+                <Link href="#features">Features</Link>
               </MenubarTrigger>
             </MenubarMenu>
             <MenubarMenu>
               <MenubarTrigger className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
-                Pricing
-              </MenubarTrigger>
-            </MenubarMenu>
-            <MenubarMenu>
-              <MenubarTrigger className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
-                About
-              </MenubarTrigger>
-            </MenubarMenu>
-            <MenubarMenu>
-              <MenubarTrigger className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
-                Contact
+                <Link href="#pricing">Pricing</Link>
               </MenubarTrigger>
             </MenubarMenu>
           </Menubar>
