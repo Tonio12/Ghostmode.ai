@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { FcGoogle } from "react-icons/fc";
-import { Eye, EyeOff } from "lucide-react";
-import Link from "next/link";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { FcGoogle } from 'react-icons/fc';
+import { Eye, EyeOff } from 'lucide-react';
+import Link from 'next/link';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
 import {
   Form,
   FormControl,
@@ -14,9 +14,11 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { signUpSchema, type SignUpFormValues } from "@/lib/validation";
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { signUpSchema, type SignUpFormValues } from '@/lib/validation';
+import { signUp } from '@/lib/actions/auth';
+import { toast } from 'sonner';
 
 export function SignUpForm() {
   const [showPassword, setShowPassword] = useState(false);
@@ -25,34 +27,35 @@ export function SignUpForm() {
   const form = useForm<SignUpFormValues>({
     resolver: zodResolver(signUpSchema),
     defaultValues: {
-      name: "",
-      email: "",
-      password: "",
-      confirmPassword: "",
+      name: '',
+      email: '',
+      password: '',
+      confirmPassword: '',
     },
   });
 
   const onSubmit = async (data: SignUpFormValues) => {
+    const results = await signUp({
+      ...data,
+      fullName: data.name,
+    });
     setIsLoading(true);
-    
-    // TODO: Implement authentication logic
-    console.log(data);
-    
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 1000);
+
+    if (results.success) {
+      toast.success('Signup successful');
+    }
+
+    toast.error(`Error: ${results.error}`);
   };
 
   return (
     <div className="w-full max-w-md space-y-8">
       <div className="text-center">
-        <h2 className="text-3xl font-bold tracking-tight">
-          Create an account
-        </h2>
+        <h2 className="text-3xl font-bold tracking-tight">Create an account</h2>
         <p className="mt-2 text-sm text-muted-foreground">
-          Already have an account?{" "}
-          <Link 
-            href="/signin" 
+          Already have an account?{' '}
+          <Link
+            href="/signin"
             className="font-medium text-primary hover:underline"
           >
             Sign in
@@ -61,10 +64,10 @@ export function SignUpForm() {
       </div>
 
       <div className="mt-8">
-        <Button 
-          variant="outline" 
-          className="w-full" 
-          onClick={() => console.log("Google sign up")}
+        <Button
+          variant="outline"
+          className="w-full"
+          onClick={() => console.log('Google sign up')}
         >
           <FcGoogle className="mr-2 h-5 w-5" />
           Continue with Google
@@ -91,7 +94,11 @@ export function SignUpForm() {
               <FormItem>
                 <FormLabel>Full Name</FormLabel>
                 <FormControl>
-                  <Input placeholder="John Doe" {...field} disabled={isLoading} />
+                  <Input
+                    placeholder="John Doe"
+                    {...field}
+                    disabled={isLoading}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -105,7 +112,12 @@ export function SignUpForm() {
               <FormItem>
                 <FormLabel>Email</FormLabel>
                 <FormControl>
-                  <Input placeholder="you@example.com" type="email" {...field} disabled={isLoading} />
+                  <Input
+                    placeholder="you@example.com"
+                    type="email"
+                    {...field}
+                    disabled={isLoading}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -120,11 +132,11 @@ export function SignUpForm() {
                 <FormLabel>Password</FormLabel>
                 <FormControl>
                   <div className="relative">
-                    <Input 
-                      placeholder="••••••••" 
-                      type={showPassword ? "text" : "password"} 
-                      {...field} 
-                      disabled={isLoading} 
+                    <Input
+                      placeholder="••••••••"
+                      type={showPassword ? 'text' : 'password'}
+                      {...field}
+                      disabled={isLoading}
                     />
                     <button
                       type="button"
@@ -151,11 +163,11 @@ export function SignUpForm() {
               <FormItem>
                 <FormLabel>Confirm Password</FormLabel>
                 <FormControl>
-                  <Input 
-                    placeholder="••••••••" 
-                    type={showPassword ? "text" : "password"} 
-                    {...field} 
-                    disabled={isLoading} 
+                  <Input
+                    placeholder="••••••••"
+                    type={showPassword ? 'text' : 'password'}
+                    {...field}
+                    disabled={isLoading}
                   />
                 </FormControl>
                 <FormMessage />
@@ -163,22 +175,18 @@ export function SignUpForm() {
             )}
           />
 
-          <Button 
-            type="submit" 
-            className="w-full" 
-            disabled={isLoading}
-          >
+          <Button type="submit" className="w-full" disabled={isLoading}>
             {isLoading ? (
               <div className="flex items-center">
                 <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-background border-t-transparent"></div>
                 Creating account...
               </div>
             ) : (
-              "Create account"
+              'Create account'
             )}
           </Button>
         </form>
       </Form>
     </div>
   );
-} 
+}
