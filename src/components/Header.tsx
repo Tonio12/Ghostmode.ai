@@ -1,3 +1,4 @@
+'use client'
 import Image from 'next/image';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
@@ -8,8 +9,10 @@ import {
 } from "@/components/ui/menubar";
 import { ArrowRight } from 'lucide-react';
 import { ModeToggle } from './mode-toggle';
+import { useRouter } from 'next/navigation';
 
 export function Header() {
+  const router = useRouter();
   return (
     <header className="w-full h-16 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 flex justify-between items-center px-16">
         <div className="flex items-center gap-2 w-1/3">
@@ -42,7 +45,9 @@ export function Header() {
         
         <div className="flex items-center gap-4 justify-end w-1/3">
           <ModeToggle />
-          <Button variant="ghost" className="text-sm font-medium">
+          <Button onClick={() => {
+            router.push('/signin')
+          }} variant="ghost" className="text-sm font-medium">
             Login
             <ArrowRight className="ml-2 h-4 w-4" />
           </Button>

@@ -34,11 +34,11 @@ export function SignInForm() {
 
   const form = useForm<SignInFormValues>({
     resolver: zodResolver(signInSchema),
-    defaultValues: signInSchema.parse({
+    defaultValues: {
       email: "",
       password: "",
       remember: false,
-    }),
+    },
   });
 
   const onSubmit = async (data: SignInFormValues) => {

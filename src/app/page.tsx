@@ -1,3 +1,5 @@
+'use client'
+
 import Image from 'next/image';
 import { DotPattern } from '@/components/magicui/dot-pattern';
 import { cn } from '@/lib/utils';
@@ -7,8 +9,9 @@ import Features from '@/components/Features';
 import Pricing from '@/components/Pricing';
 import { Header } from '@/components/Header';
 import Footer from '@/components/Footer';
-
+import { useRouter } from 'next/navigation';
 const Home = () => {
+  const router = useRouter()
   return (
     <>
       <Header />
@@ -39,7 +42,7 @@ const Home = () => {
             <p className="text-xl text-muted-foreground max-w-2xl">
               Let <AnimatedGradientText>Ghostmode.ai</AnimatedGradientText> gently delay or auto-reply to messages when you&apos;re overwhelmed. No guilt. Just space to breathe.
             </p>
-            <Button className="mt-6 text-lg">Get Started</Button>
+            <Button onClick={() => router.push('/signup')} className="mt-6 text-lg">Get Started</Button>
           </div>
           <div className="absolute bottom-24 right-32 z-0">
             <Image 
