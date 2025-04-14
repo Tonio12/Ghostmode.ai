@@ -22,6 +22,7 @@ import { Control } from 'react-hook-form';
 import { signInWithCredentials } from '@/lib/actions/auth';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
+import { signIn } from 'next-auth/react';
 
 const signInSchema = z.object({
   email: z.string().email(),
@@ -76,7 +77,8 @@ export function SignInForm() {
         <Button
           variant="outline"
           className="w-full"
-          onClick={() => console.log('Google sign in')}
+          onClick={() => signIn('google', { callbackUrl: '/home' })}
+          disabled={isSubmitting}
         >
           <FcGoogle className="mr-2 h-5 w-5" />
           Continue with Google

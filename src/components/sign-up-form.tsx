@@ -20,6 +20,7 @@ import { signUpSchema, type SignUpFormValues } from '@/lib/validation';
 import { signUp } from '@/lib/actions/auth';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
+import { signIn } from 'next-auth/react';
 
 export function SignUpForm() {
   const [showPassword, setShowPassword] = useState(false);
@@ -67,10 +68,11 @@ export function SignUpForm() {
       </div>
 
       <div className="mt-8">
-        <Button
-          variant="outline"
-          className="w-full"
-          onClick={() => console.log('Google sign up')}
+        <Button 
+          variant="outline" 
+          className="w-full" 
+          onClick={() => signIn('google', { callbackUrl: '/home' })}
+          disabled={isSubmitting}
         >
           <FcGoogle className="mr-2 h-5 w-5" />
           Continue with Google

@@ -1,16 +1,22 @@
 import NextAuth, { User } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
+import Google from "next-auth/providers/google";
 import { signInSchema } from "./lib/validation";
 import db from "./db";
 import { users } from "./db/schema";
 import { compare } from "bcryptjs";
 import { eq } from "drizzle-orm";
+import { config } from "./lib/config";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   session: {
     strategy: "jwt",
   },
   providers: [
+    Google({
+      clientId: config.env.google.id,
+      clientSecret: config.env.google.secret
+    }),
     Credentials({
       credentials: {
         email: {},
@@ -55,6 +61,12 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     signIn: "/signin",
   },
   callbacks: {
+    async redirect({ url, baseUrl }) {
+      // If the URL starts with the base URL, just use it
+      if (url.startsWith(baseUrl)) return url;
+      // After sign in, redirect to home
+      return `${baseUrl}/home`;
+    },
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
