@@ -22,7 +22,6 @@ import { toast } from 'sonner';
 
 export function SignUpForm() {
   const [showPassword, setShowPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<SignUpFormValues>({
     resolver: zodResolver(signUpSchema),
@@ -34,12 +33,13 @@ export function SignUpForm() {
     },
   });
 
+  const { isSubmitting } = form.formState;
+
   const onSubmit = async (data: SignUpFormValues) => {
     const results = await signUp({
       ...data,
       fullName: data.name,
     });
-    setIsLoading(true);
 
     if (results.success) {
       toast.success('Signup successful');
@@ -97,7 +97,7 @@ export function SignUpForm() {
                   <Input
                     placeholder="John Doe"
                     {...field}
-                    disabled={isLoading}
+                    disabled={isSubmitting}
                   />
                 </FormControl>
                 <FormMessage />
@@ -116,7 +116,7 @@ export function SignUpForm() {
                     placeholder="you@example.com"
                     type="email"
                     {...field}
-                    disabled={isLoading}
+                    disabled={isSubmitting}
                   />
                 </FormControl>
                 <FormMessage />
@@ -136,7 +136,7 @@ export function SignUpForm() {
                       placeholder="••••••••"
                       type={showPassword ? 'text' : 'password'}
                       {...field}
-                      disabled={isLoading}
+                      disabled={isSubmitting}
                     />
                     <button
                       type="button"
@@ -167,7 +167,7 @@ export function SignUpForm() {
                     placeholder="••••••••"
                     type={showPassword ? 'text' : 'password'}
                     {...field}
-                    disabled={isLoading}
+                    disabled={isSubmitting}
                   />
                 </FormControl>
                 <FormMessage />
@@ -175,8 +175,8 @@ export function SignUpForm() {
             )}
           />
 
-          <Button type="submit" className="w-full" disabled={isLoading}>
-            {isLoading ? (
+          <Button type="submit" className="w-full" disabled={isSubmitting}>
+            {isSubmitting ? (
               <div className="flex items-center">
                 <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-background border-t-transparent"></div>
                 Creating account...
