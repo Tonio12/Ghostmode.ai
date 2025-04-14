@@ -19,9 +19,11 @@ import { Input } from '@/components/ui/input';
 import { signUpSchema, type SignUpFormValues } from '@/lib/validation';
 import { signUp } from '@/lib/actions/auth';
 import { toast } from 'sonner';
+import { useRouter } from 'next/navigation';
 
 export function SignUpForm() {
   const [showPassword, setShowPassword] = useState(false);
+  const router = useRouter();
 
   const form = useForm<SignUpFormValues>({
     resolver: zodResolver(signUpSchema),
@@ -43,6 +45,7 @@ export function SignUpForm() {
 
     if (results.success) {
       toast.success('Signup successful');
+      router.push('/home');
     }
 
     toast.error(`Error: ${results.error}`);

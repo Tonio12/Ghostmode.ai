@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { FcGoogle } from "react-icons/fc";
-import { Eye, EyeOff } from "lucide-react";
-import Link from "next/link";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { FcGoogle } from 'react-icons/fc';
+import { Eye, EyeOff } from 'lucide-react';
+import Link from 'next/link';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
 import {
   Form,
   FormControl,
@@ -14,11 +14,14 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Checkbox } from "@/components/ui/checkbox";
-import * as z from "zod";
-import { Control } from "react-hook-form";
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Checkbox } from '@/components/ui/checkbox';
+import * as z from 'zod';
+import { Control } from 'react-hook-form';
+import { signInWithCredentials } from '@/lib/actions/auth';
+import { toast } from 'sonner';
+import { useRouter } from 'next/navigation';
 
 const signInSchema = z.object({
   email: z.string().email(),
@@ -30,38 +33,38 @@ type SignInFormValues = z.infer<typeof signInSchema>;
 
 export function SignInForm() {
   const [showPassword, setShowPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
 
   const form = useForm<SignInFormValues>({
     resolver: zodResolver(signInSchema),
     defaultValues: {
-      email: "",
-      password: "",
+      email: '',
+      password: '',
       remember: false,
     },
   });
 
+  const { isSubmitting } = form.formState;
+
   const onSubmit = async (data: SignInFormValues) => {
-    setIsLoading(true);
-    
-    // TODO: Implement authentication logic
-    console.log(data);
-    
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 1000);
+    const result = await signInWithCredentials(data);
+
+    if (result.success) {
+      toast.success('Signin Successful');
+      router.push('/home');
+    }
+
+    toast.error(result.error);
   };
 
   return (
     <div className="w-full max-w-md space-y-8">
       <div className="text-center">
-        <h2 className="text-3xl font-bold tracking-tight">
-          Welcome back
-        </h2>
+        <h2 className="text-3xl font-bold tracking-tight">Welcome back</h2>
         <p className="mt-2 text-sm text-muted-foreground">
-          Don&apos;t have an account?{" "}
-          <Link 
-            href="/signup" 
+          Don&apos;t have an account?{' '}
+          <Link
+            href="/signup"
             className="font-medium text-primary hover:underline"
           >
             Sign up
@@ -70,10 +73,10 @@ export function SignInForm() {
       </div>
 
       <div className="mt-8">
-        <Button 
-          variant="outline" 
-          className="w-full" 
-          onClick={() => console.log("Google sign in")}
+        <Button
+          variant="outline"
+          className="w-full"
+          onClick={() => console.log('Google sign in')}
         >
           <FcGoogle className="mr-2 h-5 w-5" />
           Continue with Google
@@ -100,7 +103,11 @@ export function SignInForm() {
               <FormItem>
                 <FormLabel>Email</FormLabel>
                 <FormControl>
-                  <Input placeholder="name@example.com" {...field} disabled={isLoading} />
+                  <Input
+                    placeholder="name@example.com"
+                    {...field}
+                    disabled={isSubmitting}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -115,11 +122,11 @@ export function SignInForm() {
                 <FormLabel>Password</FormLabel>
                 <FormControl>
                   <div className="relative">
-                    <Input 
-                      placeholder="••••••••" 
-                      type={showPassword ? "text" : "password"} 
-                      {...field} 
-                      disabled={isLoading} 
+                    <Input
+                      placeholder="••••••••"
+                      type={showPassword ? 'text' : 'password'}
+                      {...field}
+                      disabled={isSubmitting}
                     />
                     <button
                       type="button"
@@ -157,30 +164,26 @@ export function SignInForm() {
                 </FormItem>
               )}
             />
-            <Link 
-              href="/forgot-password" 
+            <Link
+              href="/forgot-password"
               className="text-sm font-medium text-primary hover:underline"
             >
               Forgot password?
             </Link>
           </div>
 
-          <Button 
-            type="submit" 
-            className="w-full" 
-            disabled={isLoading}
-          >
-            {isLoading ? (
+          <Button type="submit" className="w-full" disabled={isSubmitting}>
+            {isSubmitting ? (
               <div className="flex items-center">
                 <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-background border-t-transparent"></div>
                 Signing in...
               </div>
             ) : (
-              "Sign in"
+              'Sign in'
             )}
           </Button>
         </form>
       </Form>
     </div>
   );
-} 
+}
