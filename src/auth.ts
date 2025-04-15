@@ -73,11 +73,17 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       // After sign in, redirect to home
       return `${baseUrl}/home`;
     },
-    async jwt({ token, user }) {
+    async jwt({ token, user, account }) {
       if (user) {
         token.id = user.id;
         token.name = user.name;
       }
+      
+      // Save the access token from Google OAuth
+      if (account && account.provider === 'google') {
+        token.accessToken = account.access_token;
+      }
+      
       return token;
     },
 
@@ -86,6 +92,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         session.user.id = token.id as string;
         session.user.name = token.name as string;
       }
+      
+      // Add access token to session
+      session.accessToken = token.accessToken as string;
 
       return session;
     },
