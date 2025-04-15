@@ -6,7 +6,8 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { getAutoReplySettings, updateAutoReplySettings } from '@/lib/actions/gmail';
 import { Label } from '@/components/ui/label';
-import { Save } from 'lucide-react';
+import { LogOut, Save } from 'lucide-react';
+import { signOut } from 'next-auth/react';
 
 interface AutoReplySettings {
   enabled: boolean;
@@ -65,6 +66,11 @@ export default function SettingsPage() {
       setSaving(false);
     }
   }
+
+  // Add logout handler
+  const handleLogout = async () => {
+    await signOut({ callbackUrl: '/' });
+  };
 
   return (
     <div className="p-4 md:p-6 w-full">
@@ -160,10 +166,10 @@ export default function SettingsPage() {
         </div>
 
         <div className="col-span-1 border rounded-lg p-4">
-          <h2 className="text-lg font-medium mb-4">Account Settings</h2>
+          <h2 className="text-base/7 font-medium mb-4">Account Settings</h2>
           <div className="space-y-4">
             <div>
-              <h3 className="font-medium">Connected Accounts</h3>
+              <h3 className="text-sm font-medium">Connected Accounts</h3>
               <div className="flex items-center gap-3 mt-2 p-2 border rounded">
                 <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
                   G
@@ -173,6 +179,17 @@ export default function SettingsPage() {
                   <p className="text-xs text-muted-foreground">Connected for Gmail</p>
                 </div>
               </div>
+            </div>
+            
+            <div className="border-t pt-4 mt-4">
+              <Button 
+                variant="destructive" 
+                onClick={handleLogout}
+                className="w-full"
+              >
+                <LogOut className="h-4 w-4 mr-2" />
+                Logout
+              </Button>
             </div>
           </div>
         </div>
