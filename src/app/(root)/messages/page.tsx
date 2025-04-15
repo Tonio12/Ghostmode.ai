@@ -1,9 +1,11 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { fetchEmails } from '@/lib/actions/gmail';
+import { fetchEmails, sendAIReply } from '@/lib/actions/gmail';
 import { Button } from '@/components/ui/button';
 import { Inbox, RefreshCw, Mail, MailX } from 'lucide-react';
+import { toast } from 'sonner';
+import { GmailTest } from '@/components/gmail-test';
 
 interface Email {
   id: string;
@@ -20,6 +22,7 @@ export default function MessagesPage() {
   const [emails, setEmails] = useState<Email[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [selectedEmail, setSelectedEmail] = useState<Email | null>(null);
+  const [replying, setReplying] = useState(false);
 
   useEffect(() => {
     loadEmails();
@@ -43,8 +46,44 @@ export default function MessagesPage() {
     }
   }
 
+  async function handleAutoReply() {
+    if (!selectedEmail) return;
+    
+    setReplying(true);
+    try {
+      const result = await sendAIReply(
+        selectedEmail.threadId,
+        selectedEmail.id,
+        selectedEmail.from,
+        `Re: ${selectedEmail.subject}`,
+        selectedEmail.snippet
+      );
+      
+      if (result.success) {
+        toast.success("Auto-reply sent", {
+          description: "Your AI-generated reply was sent successfully."
+        });
+      } else {
+        toast.error("Failed to send auto-reply", {
+          description: result.error || "An unknown error occurred"
+        });
+      }
+    } catch (error) {
+      console.error("Error sending auto-reply:", error);
+      toast.error("Error", {
+        description: "Failed to send auto-reply. Please try again."
+      });
+    } finally {
+      setReplying(false);
+    }
+  }
+
   return (
     <div className="p-4 md:p-6 w-full">
+      <div className="mb-6">
+        <GmailTest />
+      </div>
+      
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-xl md:text-2xl font-bold">Messages</h1>
@@ -125,8 +164,13 @@ export default function MessagesPage() {
                   </p>
                 </div>
                 <div className="flex space-x-2">
-                  <Button variant="outline" size="sm">
-                    Auto-Reply
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={handleAutoReply}
+                    disabled={replying}
+                  >
+                    {replying ? 'Sending...' : 'Auto-Reply'}
                   </Button>
                 </div>
               </div>

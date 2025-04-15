@@ -1,4 +1,4 @@
-import NextAuth, { User } from "next-auth";
+import NextAuth, { DefaultSession, User } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import Google from "next-auth/providers/google";
 import { signInSchema } from "./lib/validation";
@@ -7,6 +7,28 @@ import { users } from "./db/schema";
 import { compare } from "bcryptjs";
 import { eq } from "drizzle-orm";
 import { config } from "./lib/config";
+
+// Extend the Session type to include tokens
+declare module "next-auth" {
+  interface Session {
+    accessToken?: string;
+    refreshToken?: string;
+    user?: {
+      id?: string;
+      name?: string;
+      email?: string;
+      image?: string;
+    } & DefaultSession["user"];
+  }
+  
+  interface JWT {
+    id?: string;
+    name?: string;
+    accessToken?: string;
+    refreshToken?: string;
+    accessTokenExpires?: number;
+  }
+}
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   session: {
@@ -19,7 +41,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       authorization: {
         params: {
           scope:
-            "https://www.googleapis.com/auth/gmail.readonly https://www.googleapis.com/auth/gmail.send openid email profile",
+            "https://www.googleapis.com/auth/gmail.readonly https://www.googleapis.com/auth/gmail.send https://www.googleapis.com/auth/gmail.modify openid email profile",
+          access_type: "offline",
+          prompt: "consent",
         },
       },
     }),
@@ -68,9 +92,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   },
   callbacks: {
     async redirect({ url, baseUrl }) {
-      // If the URL starts with the base URL, just use it
       if (url.startsWith(baseUrl)) return url;
-      // After sign in, redirect to home
       return `${baseUrl}/home`;
     },
     async jwt({ token, user, account }) {
@@ -79,9 +101,16 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         token.name = user.name;
       }
       
-      // Save the access token from Google OAuth
+      // Save the access token and refresh token from Google OAuth
       if (account && account.provider === 'google') {
         token.accessToken = account.access_token;
+        token.refreshToken = account.refresh_token;
+        token.accessTokenExpires = account.expires_at ? account.expires_at * 1000 : 0;
+      }
+      
+      // Return previous token if the access token has not expired yet
+      if (token.accessTokenExpires && typeof token.accessTokenExpires === 'number' && Date.now() < token.accessTokenExpires) {
+        return token;
       }
       
       return token;
@@ -93,8 +122,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         session.user.name = token.name as string;
       }
       
-      // Add access token to session
+      // Add tokens to session
       session.accessToken = token.accessToken as string;
+      session.refreshToken = token.refreshToken as string;
 
       return session;
     },

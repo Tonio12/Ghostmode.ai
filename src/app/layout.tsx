@@ -1,18 +1,17 @@
 import type { Metadata } from "next";
 import { Inter, Lora } from "next/font/google";
 import "./globals.css";
-import { ThemeProvider } from "@/components/theme-provider";
+import { Providers } from "@/components/providers";
+import { auth } from "@/auth";
 
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
-  display: "swap",
 });
 
 const lora = Lora({
   subsets: ["latin"],
   variable: "--font-lora",
-  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -20,23 +19,21 @@ export const metadata: Metadata = {
   description: "",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const session = await auth();
+
   return (
     <html lang="en" suppressHydrationWarning>
       <body
         className={`${inter.variable} ${lora.variable} font-sans antialiased`}
       >
-        <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange>
+        <Providers session={session}>
           {children}
-        </ThemeProvider>
+        </Providers>
       </body>
     </html>
   );

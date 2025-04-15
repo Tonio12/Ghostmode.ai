@@ -1,19 +1,6 @@
 import { google, gmail_v1 } from 'googleapis';
 import { Session } from 'next-auth';
 
-// Extend the Session type to include accessToken
-declare module 'next-auth' {
-  interface Session {
-    accessToken?: string;
-    user?: {
-      id?: string;
-      name?: string;
-      email?: string;
-      image?: string;
-    };
-  }
-}
-
 // Gmail API interface for our app
 interface EmailDetails {
   id: string;
@@ -138,11 +125,13 @@ export const sendAutoReply = async (
     
     // Create the email content
     const emailLines = [
-      `From: ${session?.user?.email}`,
+      `From: ${session?.user?.email || ''}`,
       `To: ${to}`,
-      `Subject: Re: ${subject}`,
+      `Subject: ${subject}`,
       'Content-Type: text/plain; charset=utf-8',
       'MIME-Version: 1.0',
+      'In-Reply-To: ' + messageId,
+      'References: ' + messageId,
       '',
       messageText
     ];
