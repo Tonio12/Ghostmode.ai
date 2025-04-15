@@ -2,7 +2,6 @@ import { OpenAI } from 'openai';
 import { NextResponse } from 'next/server';
 import { config } from '@/lib/config';
 
-// Initialize OpenAI client with DeepSeek API configuration
 const openai = new OpenAI({
   baseURL: 'https://openrouter.ai/api/v1',
   apiKey: config.env.deepSeekApiKey,
@@ -19,13 +18,11 @@ export async function POST(req: Request) {
       );
     }
 
-    // Create a system prompt that includes the tone instruction
     const systemPrompt = tone 
       ? `You are an AI assistant that helps write email replies in a ${tone} tone. Maintain this tone throughout your response. Keep the reply concise and professional.`
       : 'You are an AI assistant that helps write professional email replies. Keep the reply concise and to the point.';
 
     try {
-      // Generate response using DeepSeek Chat model
       const completion = await openai.chat.completions.create({
         model: 'openai/gpt-4o',
         messages: [
@@ -50,7 +47,6 @@ export async function POST(req: Request) {
       console.error('DeepSeek API error:', apiError);
       
       if (apiError instanceof Error) {
-        // Check for specific error types
         if (apiError.message.includes('402')) {
           return NextResponse.json(
             { 
