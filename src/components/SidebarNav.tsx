@@ -30,7 +30,7 @@ export default function SidebarNav({ user }: SidebarNavProps) {
       <SidebarProvider defaultOpen={true}>
         <Sidebar className="border-r">
           <SidebarHeader className="px-4 py-6">
-            <div className="flex justify-center items-center gap-2">
+            <div className="flex items-center gap-2">
               <Bot className="h-6 w-6" />
               <h1 className="text-lg font-bold mb-0">Ghostmode.ai</h1>
             </div>

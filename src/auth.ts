@@ -15,7 +15,13 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
     Google({
       clientId: config.env.google.id,
-      clientSecret: config.env.google.secret
+      clientSecret: config.env.google.secret,
+      authorization: {
+        params: {
+          scope:
+            "https://www.googleapis.com/auth/gmail.readonly https://www.googleapis.com/auth/gmail.send openid email profile",
+        },
+      },
     }),
     Credentials({
       credentials: {
