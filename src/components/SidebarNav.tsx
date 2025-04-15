@@ -16,6 +16,7 @@ import { MessageSquare, Home, Users, Settings, Database, Bot, BarChart } from 'l
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { User } from 'next-auth';
+import { ModeToggle } from './mode-toggle';
 
 interface SidebarNavProps {
   user?: User;
@@ -29,9 +30,9 @@ export default function SidebarNav({ user }: SidebarNavProps) {
       <SidebarProvider defaultOpen={true}>
         <Sidebar className="border-r">
           <SidebarHeader className="px-4 py-6">
-            <div className="flex items-center gap-2">
+            <div className="flex justify-center items-center gap-2">
               <Bot className="h-6 w-6" />
-              <h1 className="text-lg font-bold">SocialAI</h1>
+              <h1 className="text-lg font-bold mb-0">Ghostmode.ai</h1>
             </div>
           </SidebarHeader>
 
@@ -112,13 +113,19 @@ export default function SidebarNav({ user }: SidebarNavProps) {
           </SidebarContent>
 
           <SidebarFooter className="px-4 py-4">
-            <div className="flex items-center gap-2">
-              <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
-                {user?.name?.[0] || 'U'}
+            <div className="flex flex-col space-y-3">
+              <div className="flex items-center gap-2">
+                <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
+                  {user?.name?.[0] || 'U'}
+                </div>
+                <div className="flex flex-col text-sm">
+                  <span className="font-medium">{user?.name || 'User'}</span>
+                  <span className="text-muted-foreground text-xs truncate">{user?.email || 'user@example.com'}</span>
+                </div>
               </div>
-              <div className="flex flex-col text-sm">
-                <span className="font-medium">{user?.name || 'User'}</span>
-                <span className="text-muted-foreground text-xs truncate">{user?.email || 'user@example.com'}</span>
+              <div className="flex items-center justify-between">
+                <span className="text-xs text-muted-foreground">Theme</span>
+                <ModeToggle />
               </div>
             </div>
           </SidebarFooter>
