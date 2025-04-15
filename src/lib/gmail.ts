@@ -1,5 +1,6 @@
 import { google, gmail_v1 } from 'googleapis';
 import { Session } from 'next-auth';
+import { config } from '@/lib/config';
 
 // Gmail API interface for our app
 interface EmailDetails {
@@ -22,9 +23,14 @@ export const getGmailClient = async (session: Session | null) => {
     throw new Error('No access token available');
   }
 
-  const auth = new google.auth.OAuth2();
+  const auth = new google.auth.OAuth2(
+    config.env.google.id,
+    config.env.google.secret
+  );
+  
   auth.setCredentials({
     access_token: session.accessToken,
+    refresh_token: session.refreshToken,
   });
 
   return google.gmail({ version: 'v1', auth });

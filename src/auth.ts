@@ -101,14 +101,12 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         token.name = user.name;
       }
       
-      // Save the access token and refresh token from Google OAuth
       if (account && account.provider === 'google') {
         token.accessToken = account.access_token;
         token.refreshToken = account.refresh_token;
         token.accessTokenExpires = account.expires_at ? account.expires_at * 1000 : 0;
       }
       
-      // Return previous token if the access token has not expired yet
       if (token.accessTokenExpires && typeof token.accessTokenExpires === 'number' && Date.now() < token.accessTokenExpires) {
         return token;
       }

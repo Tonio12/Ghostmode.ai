@@ -1,7 +1,8 @@
 'use server';
 
 import { auth } from '@/auth';
-import { getEmails, sendAutoReply, generateAIResponse } from '@/lib/gmail';
+import { getEmails, sendAutoReply } from '@/lib/gmail';
+import { config } from '../config';
 
 /**
  * Server action to fetch emails from Gmail
@@ -31,8 +32,28 @@ export async function sendAIReply(threadId: string, messageId: string, to: strin
       throw new Error('Not authenticated');
     }
     
-    // Generate AI response based on the original email content
-    const aiResponse = await generateAIResponse(originalContent);
+    // Generate AI response using our API
+    const response = await fetch(`${config.env.appUrl}/api/ai/generate`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include',
+      body: JSON.stringify({
+        emailContent: originalContent,
+        tone: 'professional'
+      }),
+    });
+
+    console.log(response)
+    
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || 'Failed to generate AI reply');
+    }
+    
+    const data = await response.json();
+    const aiResponse = data.reply;
     
     // Send the auto-reply
     const result = await sendAutoReply(
@@ -96,6 +117,33 @@ export async function updateAutoReplySettings(settings: {
     return { success: true, settings };
   } catch (error) {
     console.error('Error updating auto-reply settings:', error);
+    return { success: false, error: (error as Error).message };
+  }
+}
+
+/**
+ * Server action to send an email reply without generating a new AI reply
+ */
+export async function sendEmailReply(threadId: string, messageId: string, to: string, subject: string, messageText: string) {
+  try {
+    const session = await auth();
+    if (!session) {
+      throw new Error('Not authenticated');
+    }
+    
+    // Send the email directly
+    const result = await sendAutoReply(
+      session,
+      threadId,
+      messageId,
+      to,
+      subject,
+      messageText
+    );
+    
+    return { success: true, result };
+  } catch (error) {
+    console.error('Error sending email reply:', error);
     return { success: false, error: (error as Error).message };
   }
 } 

@@ -1,11 +1,12 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { fetchEmails, sendAIReply } from '@/lib/actions/gmail';
+import { fetchEmails, sendEmailReply } from '@/lib/actions/gmail';
 import { Button } from '@/components/ui/button';
 import { Inbox, RefreshCw, Mail, MailX } from 'lucide-react';
 import { toast } from 'sonner';
 import { GmailTest } from '@/components/gmail-test';
+import { AIReplyGenerator } from '@/components/ai-reply-generator';
 
 interface Email {
   id: string;
@@ -23,6 +24,7 @@ export default function MessagesPage() {
   const [error, setError] = useState<string | null>(null);
   const [selectedEmail, setSelectedEmail] = useState<Email | null>(null);
   const [replying, setReplying] = useState(false);
+  const [replyContent, setReplyContent] = useState<string>('');
 
   useEffect(() => {
     loadEmails();
@@ -47,22 +49,24 @@ export default function MessagesPage() {
   }
 
   async function handleAutoReply() {
-    if (!selectedEmail) return;
+    if (!selectedEmail || !replyContent) return;
     
     setReplying(true);
     try {
-      const result = await sendAIReply(
+      const result = await sendEmailReply(
         selectedEmail.threadId,
         selectedEmail.id,
         selectedEmail.from,
         `Re: ${selectedEmail.subject}`,
-        selectedEmail.snippet
+        replyContent
       );
       
       if (result.success) {
         toast.success("Auto-reply sent", {
           description: "Your AI-generated reply was sent successfully."
         });
+        // Clear the reply content after sending
+        setReplyContent('');
       } else {
         toast.error("Failed to send auto-reply", {
           description: result.error || "An unknown error occurred"
@@ -77,6 +81,10 @@ export default function MessagesPage() {
       setReplying(false);
     }
   }
+
+  const handleReplyGenerated = (reply: string) => {
+    setReplyContent(reply);
+  };
 
   return (
     <div className="p-4 md:p-6 w-full">
@@ -163,19 +171,38 @@ export default function MessagesPage() {
                     {new Date(selectedEmail.date).toLocaleString()}
                   </p>
                 </div>
-                <div className="flex space-x-2">
-                  <Button 
-                    variant="outline" 
-                    size="sm"
-                    onClick={handleAutoReply}
-                    disabled={replying}
-                  >
-                    {replying ? 'Sending...' : 'Auto-Reply'}
-                  </Button>
-                </div>
               </div>
               <div className="border-t pt-4 mt-4">
                 <p className="whitespace-pre-line">{selectedEmail.snippet}...</p>
+              </div>
+              
+              <div className="mt-6 grid gap-6 grid-cols-1 md:grid-cols-2">
+                <AIReplyGenerator 
+                  emailContent={`Subject: ${selectedEmail.subject}\nFrom: ${selectedEmail.from}\n\n${selectedEmail.snippet}`}
+                  onReplyGenerated={handleReplyGenerated}
+                />
+                
+                <div className="space-y-4">
+                  <h3 className="text-lg font-medium">Your Reply</h3>
+                  {replyContent ? (
+                    <>
+                      <div className="border p-4 rounded-md bg-muted/30 whitespace-pre-line h-[200px] overflow-y-auto">
+                        {replyContent}
+                      </div>
+                      <Button 
+                        onClick={handleAutoReply} 
+                        disabled={replying}
+                        className="w-full"
+                      >
+                        {replying ? 'Sending...' : 'Send Auto-Reply'}
+                      </Button>
+                    </>
+                  ) : (
+                    <p className="text-muted-foreground">
+                      Generate a reply using the options on the left
+                    </p>
+                  )}
+                </div>
               </div>
             </div>
           ) : (

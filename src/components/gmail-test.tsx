@@ -27,6 +27,7 @@ export function GmailTest() {
     try {
       const response = await fetch('/api/gmail/test', {
         method: 'POST',
+        credentials: 'include',
       });
       const data = await response.json() as TestResult;
       setResult(data);
