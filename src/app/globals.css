@@ -69,9 +69,9 @@
   --popover: #ffffff;
   --popover-foreground: #2d3748;
 
-  /* Primary colors */
-  --primary: #a2d2ff;
-  --primary-foreground: #1a365d;
+  /* Primary colors - Updated for better contrast */
+  --primary: #4a9ded; /* Changed from #a2d2ff to a darker blue */
+  --primary-foreground: #ffffff; /* Changed to white for better contrast */
 
   /* Secondary colors */
   --secondary: #bde0fe;
@@ -94,7 +94,7 @@
   --ring: #bde0fe;
 
   /* Chart colors */
-  --chart-1: #a2d2ff;
+  --chart-1: #4a9ded; /* Updated to match new primary */
   --chart-2: #bde0fe;
   --chart-3: #ffafcc;
   --chart-4: #ffc8dd;
@@ -103,8 +103,8 @@
   /* Sidebar */
   --sidebar: #ffffff;
   --sidebar-foreground: #2d3748;
-  --sidebar-primary: #a2d2ff;
-  --sidebar-primary-foreground: #1a365d;
+  --sidebar-primary: #4a9ded; /* Updated to match new primary */
+  --sidebar-primary-foreground: #ffffff;
   --sidebar-accent: #ffafcc;
   --sidebar-accent-foreground: #702459;
   --sidebar-border: #cdb4db;
@@ -123,7 +123,7 @@
   --popover-foreground: #ffffff;
 
   /* Primary colors */
-  --primary: #a2d2ff;
+  --primary: #4a9ded; /* Updated to match light theme */
   --primary-foreground: #ffffff;
 
   /* Secondary colors */
@@ -147,7 +147,7 @@
   --ring: #bde0fe50;
 
   /* Chart colors */
-  --chart-1: #a2d2ff;
+  --chart-1: #4a9ded; /* Updated to match new primary */
   --chart-2: #bde0fe;
   --chart-3: #ffafcc;
   --chart-4: #ffc8dd;
@@ -156,7 +156,7 @@
   /* Sidebar */
   --sidebar: #242438;
   --sidebar-foreground: #ffffff;
-  --sidebar-primary: #a2d2ff;
+  --sidebar-primary: #4a9ded; /* Updated to match new primary */
   --sidebar-primary-foreground: #ffffff;
   --sidebar-accent: #ffafcc;
   --sidebar-accent-foreground: #ffffff;
@@ -171,38 +171,38 @@
   body {
     @apply bg-background text-foreground font-sans text-base;
   }
-  /* Typography Scale */
+  /* Typography Scale - Reduced size */
   h1, h2, h3, h4, h5, h6 {
     @apply font-heading font-medium tracking-tight;
   }
 
   h1 {
-    @apply text-4xl leading-tight md:text-5xl lg:text-6xl mb-6;
+    @apply text-3xl leading-tight md:text-4xl lg:text-5xl mb-5; /* Reduced from 4xl/5xl/6xl */
   }
 
   h2 {
-    @apply text-3xl leading-tight md:text-4xl lg:text-5xl mb-5;
+    @apply text-2xl leading-tight md:text-3xl lg:text-4xl mb-4; /* Reduced from 3xl/4xl/5xl */
   }
 
   h3 {
-    @apply text-2xl leading-tight md:text-3xl lg:text-4xl mb-4;
+    @apply text-xl leading-tight md:text-2xl lg:text-3xl mb-3; /* Reduced from 2xl/3xl/4xl */
   }
 
   h4 {
-    @apply text-xl leading-tight md:text-2xl lg:text-3xl mb-4;
+    @apply text-lg leading-tight md:text-xl lg:text-2xl mb-3; /* Reduced from xl/2xl/3xl */
   }
 
   h5 {
-    @apply text-lg leading-tight md:text-xl lg:text-2xl mb-3;
+    @apply text-base leading-tight md:text-lg lg:text-xl mb-2; /* Reduced from lg/xl/2xl */
   }
 
   h6 {
-    @apply text-base leading-tight md:text-lg lg:text-xl mb-3;
+    @apply text-sm leading-tight md:text-base lg:text-lg mb-2; /* Reduced from base/lg/xl */
   }
 
   /* Paragraph */
   p {
-    @apply mb-4 leading-relaxed;
+    @apply mb-3 leading-relaxed text-sm md:text-base; /* Added responsive text sizing and reduced margin */
   }
 }
 

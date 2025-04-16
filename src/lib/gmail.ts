@@ -115,9 +115,6 @@ export const getEmails = async (session: Session | null, maxResults = 10): Promi
   }
 };
 
-/**
- * Send an email reply with AI-generated content
- */
 export const sendAutoReply = async (
   session: Session | null, 
   threadId: string, 

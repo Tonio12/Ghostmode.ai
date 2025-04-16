@@ -11,7 +11,8 @@ import {
   SelectValue
 } from '@/components/ui/select';
 import { toast } from 'sonner';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Sparkles, Wand2 } from 'lucide-react';
+import { motion } from 'motion/react';
 
 // List of available tones
 const TONES = [
@@ -71,19 +72,39 @@ export function AIReplyGenerator({ emailContent, onReplyGenerated }: AIReplyGene
   };
 
   return (
-    <div className="space-y-4 rounded-lg border p-4">
-      <h3 className="text-lg font-medium">Generate AI Reply</h3>
+    <motion.div 
+      className="space-y-5 rounded-lg border p-6 bg-gradient-to-br from-background to-primary/5 relative overflow-hidden shadow-sm"
+      whileHover={{ y: -2 }}
+      transition={{ duration: 0.2 }}
+    >
+      <div className="absolute top-0 right-0 size-24 bg-primary/5 rounded-bl-full -mr-6 -mt-6 opacity-70" />
+
+      <div className="flex items-center">
+        <Wand2 className="h-5 w-5 text-primary mr-2" />
+        <h3 className="text-lg font-medium">Generate AI Reply</h3>
+      </div>
       
-      <div className="space-y-2">
-        <label className="text-sm font-medium">Select Tone</label>
+      <div className="space-y-3">
+        <label className="text-sm font-medium flex items-center">
+          <Sparkles className="h-4 w-4 text-primary mr-1.5" />
+          Select Tone
+        </label>
         {!showCustomTone ? (
-          <Select value={tone} onValueChange={setTone}>
-            <SelectTrigger>
+          <Select 
+            value={tone} 
+            onValueChange={setTone}
+            disabled={isGenerating}
+          >
+            <SelectTrigger className="w-full bg-background border-primary/20 focus:ring-primary/20">
               <SelectValue placeholder="Select a tone" />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="max-h-[280px]">
               {TONES.map((toneOption) => (
-                <SelectItem key={toneOption.value} value={toneOption.value}>
+                <SelectItem 
+                  key={toneOption.value} 
+                  value={toneOption.value}
+                  className="hover:bg-primary/10 focus:bg-primary/10 transition-colors"
+                >
                   {toneOption.label}
                 </SelectItem>
               ))}
@@ -91,17 +112,20 @@ export function AIReplyGenerator({ emailContent, onReplyGenerated }: AIReplyGene
             </SelectContent>
           </Select>
         ) : (
-          <div className="space-y-2">
+          <div className="space-y-3">
             <Textarea
               placeholder="Describe your custom tone (e.g., 'playful but professional')"
               value={customTone}
               onChange={(e) => setCustomTone(e.target.value)}
-              className="h-20"
+              className="h-20 bg-background resize-none border-primary/20 focus-visible:ring-primary/20"
+              disabled={isGenerating}
             />
             <Button 
               variant="outline" 
               size="sm"
               onClick={() => setShowCustomTone(false)}
+              disabled={isGenerating}
+              className="border-primary/20 hover:bg-primary/10 hover:text-primary"
             >
               Use Preset Tone
             </Button>
@@ -113,7 +137,8 @@ export function AIReplyGenerator({ emailContent, onReplyGenerated }: AIReplyGene
         <Button 
           variant="outline" 
           onClick={() => setShowCustomTone(true)}
-          className="w-full"
+          className="w-full border-primary/20 hover:bg-primary/10 hover:text-primary"
+          disabled={isGenerating}
         >
           Describe Custom Tone
         </Button>
@@ -122,7 +147,8 @@ export function AIReplyGenerator({ emailContent, onReplyGenerated }: AIReplyGene
       <Button 
         onClick={generateReply} 
         disabled={isGenerating || (!tone && !customTone)}
-        className="w-full"
+        className="w-full bg-primary/90 hover:bg-primary shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 transition-all"
+        size="lg"
       >
         {isGenerating ? (
           <>
@@ -130,9 +156,12 @@ export function AIReplyGenerator({ emailContent, onReplyGenerated }: AIReplyGene
             Generating Reply...
           </>
         ) : (
-          'Generate AI Reply'
+          <>
+            <Sparkles className="mr-2 h-4 w-4" />
+            Generate AI Reply
+          </>
         )}
       </Button>
-    </div>
+    </motion.div>
   );
 } 
