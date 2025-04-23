@@ -7,7 +7,6 @@ import { Button } from '@/components/ui/button';
 import { AnimatedGradientText } from '@/components/magicui/animated-gradient-text';
 import { FadeIn, FadeInStagger, FadeInStaggerItem } from '@/components/magicui/fade-in';
 import Features from '@/components/Features';
-import Pricing from '@/components/Pricing';
 import { Header } from '@/components/Header';
 import Footer from '@/components/Footer';
 import { useRouter } from 'next/navigation';
@@ -231,10 +230,88 @@ const LandingPage = () => {
           <Features />
         </FadeIn>
         
-        {/* Use FadeIn for the Pricing section */}
-        <FadeIn>
-          <Pricing />
+        {/* Video Tutorial Section */}
+        <FadeIn
+          direction="up"
+          threshold={0.1}
+          className="w-full py-20 bg-gradient-to-b from-background to-muted/20"
+        >
+          <div className="container mx-auto px-4 max-w-5xl">
+            <div className="text-center mb-12">
+              <motion.h2 
+                className="text-3xl md:text-4xl font-bold mb-4"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+              >
+                See <span className="text-primary">Ghostmode</span> in Action
+              </motion.h2>
+              <motion.p 
+                className="text-lg text-muted-foreground max-w-2xl mx-auto"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.1 }}
+              >
+                Watch how easy it is to manage your Gmail inbox and respond to emails using AI-powered templates
+              </motion.p>
+            </div>
+            
+            <div className="relative rounded-xl overflow-hidden shadow-2xl mt-8">
+              <div className="relative pb-[56.25%] overflow-hidden bg-black/5">
+                <video 
+                  className="absolute inset-0 w-full h-full object-cover"
+                  controls 
+                  poster="/images/gmailthumbnail.png"
+                  preload="metadata"
+                  playsInline
+                >
+                  <source src="/gmailvideo.mp4" type="video/mp4" />
+                  Your browser does not support the video tag.
+                </video>
+              </div>
+              
+              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent h-24 opacity-0 hover:opacity-100 transition-opacity duration-300 flex items-end p-4 pointer-events-none">
+                <div className="text-white">
+                  <h3 className="text-lg font-bold">Gmail Integration Tutorial</h3>
+                  <p className="text-xs opacity-90">Learn how to use Ghostmode.ai with Gmail</p>
+                </div>
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
+              <FadeInStaggerItem className="bg-background/50 backdrop-blur-sm p-6 rounded-xl border shadow-sm">
+                <div className="flex items-center mb-4">
+                  <div className="w-10 h-10 rounded-full bg-indigo-100/30 flex items-center justify-center mr-4">
+                    <span className="text-xl font-bold text-indigo-500">1</span>
+                  </div>
+                  <h3 className="font-medium">Connect Your Gmail</h3>
+                </div>
+                <p className="text-muted-foreground text-sm">Securely link your Google account to Ghostmode with just a few clicks</p>
+              </FadeInStaggerItem>
+              
+              <FadeInStaggerItem className="bg-background/50 backdrop-blur-sm p-6 rounded-xl border shadow-sm">
+                <div className="flex items-center mb-4">
+                  <div className="w-10 h-10 rounded-full bg-purple-100/30 flex items-center justify-center mr-4">
+                    <span className="text-xl font-bold text-purple-500">2</span>
+                  </div>
+                  <h3 className="font-medium">Choose Response Style</h3>
+                </div>
+                <p className="text-muted-foreground text-sm">Select from professional, friendly, or custom tone templates for your responses</p>
+              </FadeInStaggerItem>
+              
+              <FadeInStaggerItem className="bg-background/50 backdrop-blur-sm p-6 rounded-xl border shadow-sm">
+                <div className="flex items-center mb-4">
+                  <div className="w-10 h-10 rounded-full bg-amber-100/30 flex items-center justify-center mr-4">
+                    <span className="text-xl font-bold text-amber-500">3</span>
+                  </div>
+                  <h3 className="font-medium">Send with Confidence</h3>
+                </div>
+                <p className="text-muted-foreground text-sm">Review your AI-generated response and send it with a single click</p>
+              </FadeInStaggerItem>
+            </div>
+          </div>
         </FadeIn>
+        
       </main>
       <Footer />
     </>

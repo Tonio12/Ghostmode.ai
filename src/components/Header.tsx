@@ -65,7 +65,7 @@ export function Header() {
         transition={{ delay: 0.3, duration: 0.5 }}
         className="hidden md:flex justify-center space-x-8"
       >
-        {['Features', 'Pricing'].map((item, index) => (
+        {['Features'].map((item, index) => (
           <Link 
             key={item} 
             href={`#${item.toLowerCase()}`}
