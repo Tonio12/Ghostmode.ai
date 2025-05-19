@@ -56,6 +56,21 @@ const providers: Provider[] = [
   Twitter({
     clientId: config.env.twitter.id,
     clientSecret: config.env.twitter.secret,
+    authorization: {
+      params: {
+        scope: 'tweet.read users.read offline.access',
+      },
+    },
+    profile(profile) {
+      return {
+        id: profile.data.id,
+        name: profile.data.name,
+        email: null,
+        image: profile.data.profile_image_url,
+        twitterId: profile.data.id,
+        twitterUsername: profile.data.username,
+      };
+    },
   }),
   Credentials({
     credentials: {
