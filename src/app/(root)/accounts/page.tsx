@@ -10,9 +10,6 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { Separator } from '@/components/ui/separator';
-
-import { Twitter } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 
 export default function AccountsPage() {
@@ -67,36 +64,6 @@ export default function AccountsPage() {
             {session?.accessToken && (
               <p className="text-sm text-muted-foreground">
                 Connected as {session.user?.email}
-              </p>
-            )}
-          </div>
-
-          <Separator />
-
-          {/* Twitter Connection */}
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <Twitter className="h-5 w-5 text-[#1DA1F2]" />
-                <span>Twitter</span>
-              </div>
-              {session?.twitterAccessToken ? (
-                <Badge variant="success">Connected</Badge>
-              ) : (
-                <Button
-                  onClick={() =>
-                    signIn('twitter', { callbackUrl: '/accounts' })
-                  }
-                  variant="outline"
-                  size="sm"
-                >
-                  Connect
-                </Button>
-              )}
-            </div>
-            {session?.twitterAccessToken && (
-              <p className="text-sm text-muted-foreground">
-                Connected as @{session.user?.twitterUsername}
               </p>
             )}
           </div>
