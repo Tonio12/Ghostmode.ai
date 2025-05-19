@@ -13,7 +13,7 @@ export async function fetchEmails(maxResults = 10) {
     if (!session) {
       throw new Error('Not authenticated');
     }
-    
+
     const emails = await getEmails(session, maxResults);
     return { success: true, emails };
   } catch (error) {
@@ -25,13 +25,19 @@ export async function fetchEmails(maxResults = 10) {
 /**
  * Server action to send an AI-generated auto-reply
  */
-export async function sendAIReply(threadId: string, messageId: string, to: string, subject: string, originalContent: string) {
+export async function sendAIReply(
+  threadId: string,
+  messageId: string,
+  to: string,
+  subject: string,
+  originalContent: string
+) {
   try {
     const session = await auth();
     if (!session) {
       throw new Error('Not authenticated');
     }
-    
+
     // Generate AI response using our API
     const response = await fetch(`${config.env.appUrl}/api/ai/generate`, {
       method: 'POST',
@@ -41,20 +47,18 @@ export async function sendAIReply(threadId: string, messageId: string, to: strin
       credentials: 'include',
       body: JSON.stringify({
         emailContent: originalContent,
-        tone: 'professional'
+        tone: 'professional',
       }),
     });
 
-    console.log(response)
-    
     if (!response.ok) {
       const errorData = await response.json();
       throw new Error(errorData.error || 'Failed to generate AI reply');
     }
-    
+
     const data = await response.json();
     const aiResponse = data.reply;
-    
+
     // Send the auto-reply
     const result = await sendAutoReply(
       session,
@@ -64,7 +68,7 @@ export async function sendAIReply(threadId: string, messageId: string, to: strin
       subject,
       aiResponse
     );
-    
+
     return { success: true, result };
   } catch (error) {
     console.error('Error sending AI reply:', error);
@@ -81,16 +85,17 @@ export async function getAutoReplySettings() {
     if (!session) {
       throw new Error('Not authenticated');
     }
-    
+
     // This would fetch from your database
     // For now, returning mock data
-    return { 
-      success: true, 
+    return {
+      success: true,
       settings: {
         enabled: false,
-        template: 'Thank you for your message! I will get back to you as soon as possible.\n\nBest regards,\n[Your Name]',
+        template:
+          'Thank you for your message! I will get back to you as soon as possible.\n\nBest regards,\n[Your Name]',
         autoReplyAfter: 10, // minutes
-      } 
+      },
     };
   } catch (error) {
     console.error('Error fetching auto-reply settings:', error);
@@ -111,7 +116,7 @@ export async function updateAutoReplySettings(settings: {
     if (!session) {
       throw new Error('Not authenticated');
     }
-    
+
     // This would update your database
     // For now, just returning success
     return { success: true, settings };
@@ -124,13 +129,19 @@ export async function updateAutoReplySettings(settings: {
 /**
  * Server action to send an email reply without generating a new AI reply
  */
-export async function sendEmailReply(threadId: string, messageId: string, to: string, subject: string, messageText: string) {
+export async function sendEmailReply(
+  threadId: string,
+  messageId: string,
+  to: string,
+  subject: string,
+  messageText: string
+) {
   try {
     const session = await auth();
     if (!session) {
       throw new Error('Not authenticated');
     }
-    
+
     // Send the email directly
     const result = await sendAutoReply(
       session,
@@ -140,10 +151,10 @@ export async function sendEmailReply(threadId: string, messageId: string, to: st
       subject,
       messageText
     );
-    
+
     return { success: true, result };
   } catch (error) {
     console.error('Error sending email reply:', error);
     return { success: false, error: (error as Error).message };
   }
-} 
+}
