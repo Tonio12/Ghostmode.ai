@@ -57,11 +57,13 @@ const providers: Provider[] = [
     clientId: config.env.twitter.id,
     clientSecret: config.env.twitter.secret,
     authorization: {
+      url: 'https://twitter.com/i/oauth2/authorize',
       params: {
         scope: 'tweet.read users.read offline.access',
       },
     },
     profile(profile) {
+      console.log('Twitter profile data:', profile);
       return {
         id: profile.data.id,
         name: profile.data.name,
