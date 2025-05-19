@@ -16,9 +16,4 @@ export const users = pgTable('users', {
   createdAt: timestamp('created_at', { withTimezone: true })
     .defaultNow()
     .notNull(),
-  // Twitter credentials
-  twitterId: text('twitter_id').unique(),
-  twitterUsername: varchar('twitter_username'),
-  twitterAccessToken: text('twitter_access_token'),
-  twitterAccessSecret: text('twitter_access_secret'),
 });

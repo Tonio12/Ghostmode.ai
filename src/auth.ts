@@ -1,7 +1,6 @@
 import NextAuth, { DefaultSession, User } from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
 import Google from 'next-auth/providers/google';
-import Twitter from 'next-auth/providers/twitter';
 import { signInSchema } from './lib/validation';
 import db from './db';
 import { users } from './db/schema';
@@ -15,15 +14,11 @@ declare module 'next-auth' {
   interface Session {
     accessToken?: string;
     refreshToken?: string;
-    twitterAccessToken?: string;
-    twitterAccessSecret?: string;
     user?: {
       id?: string;
       name?: string;
       email?: string;
       image?: string;
-      twitterId?: string;
-      twitterUsername?: string;
     } & DefaultSession['user'];
   }
 
@@ -32,10 +27,6 @@ declare module 'next-auth' {
     name?: string;
     accessToken?: string;
     refreshToken?: string;
-    twitterAccessToken?: string;
-    twitterAccessSecret?: string;
-    twitterId?: string;
-    twitterUsername?: string;
     accessTokenExpires?: number;
   }
 }
@@ -53,36 +44,14 @@ const providers: Provider[] = [
       },
     },
   }),
-  Twitter({
-    clientId: config.env.twitter.id,
-    clientSecret: config.env.twitter.secret,
-    authorization: {
-      url: 'https://twitter.com/i/oauth2/authorize',
-      params: {
-        scope: 'tweet.read users.read offline.access',
-      },
-    },
-    profile(profile) {
-      console.log('Twitter profile data:', profile);
-      return {
-        id: profile.data.id,
-        name: profile.data.name,
-        email: null,
-        image: profile.data.profile_image_url,
-        twitterId: profile.data.id,
-        twitterUsername: profile.data.username,
-      };
-    },
-  }),
   Credentials({
     credentials: {
-      email: {},
-      password: {},
+      email: { label: 'Email', type: 'email' },
+      password: { label: 'Password', type: 'password' },
     },
-
     async authorize(credentials) {
       if (!credentials?.email || !credentials?.password) {
-        return null;
+        throw new Error('Please enter your email and password');
       }
 
       try {
@@ -95,11 +64,15 @@ const providers: Provider[] = [
           .where(eq(users.email, email))
           .limit(1);
 
-        if (!user.length) return null;
+        if (!user.length) {
+          throw new Error('No user found with this email');
+        }
 
         const isValidPassword = await compare(password, user[0].password);
 
-        if (!isValidPassword) return null;
+        if (!isValidPassword) {
+          throw new Error('Invalid password');
+        }
 
         return {
           id: user[0].id.toString(),
@@ -108,7 +81,10 @@ const providers: Provider[] = [
         } as User;
       } catch (error) {
         console.error('Auth error:', error);
-        return null;
+        if (error instanceof Error) {
+          throw new Error(error.message);
+        }
+        throw new Error('An error occurred during sign in');
       }
     },
   }),
@@ -141,11 +117,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           token.accessTokenExpires = account.expires_at
             ? account.expires_at * 1000
             : 0;
-        } else if (account.provider === 'twitter') {
-          token.twitterAccessToken = account.oauth_token;
-          token.twitterAccessSecret = account.oauth_token_secret;
-          token.twitterId = account.providerAccountId;
-          token.twitterUsername = account.username;
         }
       }
 
@@ -164,15 +135,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       if (session.user) {
         session.user.id = token.id as string;
         session.user.name = token.name as string;
-        session.user.twitterId = token.twitterId as string;
-        session.user.twitterUsername = token.twitterUsername as string;
       }
 
       // Add tokens to session
       session.accessToken = token.accessToken as string;
       session.refreshToken = token.refreshToken as string;
-      session.twitterAccessToken = token.twitterAccessToken as string;
-      session.twitterAccessSecret = token.twitterAccessSecret as string;
 
       return session;
     },
