@@ -16,6 +16,15 @@ import { Twitter } from 'lucide-react';
 export default function AccountsPage() {
   const { data: session } = useSession();
 
+  // For debugging
+  React.useEffect(() => {
+    console.log('Session data:', {
+      twitterToken: !!session?.twitterAccessToken,
+      twitterUsername: session?.twitterUsername,
+      user: session?.user,
+    });
+  }, [session]);
+
   const handleTwitterConnect = async () => {
     try {
       const response = await fetch('/api/auth/twitter');
@@ -89,7 +98,7 @@ export default function AccountsPage() {
                 <Twitter className="h-5 w-5 text-[#1DA1F2]" />
                 <span>Twitter</span>
               </div>
-              {session?.twitterAccessToken ? (
+              {session?.twitterAccessToken && session?.twitterUsername ? (
                 <Badge variant="success">Connected</Badge>
               ) : (
                 <Button
@@ -101,9 +110,9 @@ export default function AccountsPage() {
                 </Button>
               )}
             </div>
-            {session?.twitterAccessToken && (
+            {session?.twitterAccessToken && session?.twitterUsername && (
               <p className="text-sm text-muted-foreground">
-                Connected as {session.user?.name}
+                Connected as @{session.twitterUsername}
               </p>
             )}
           </div>

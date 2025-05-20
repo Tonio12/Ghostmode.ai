@@ -139,6 +139,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       if (user) {
         token.id = user.id;
         token.name = user.name;
+        token.email = user.email;
       }
 
       if (account) {
@@ -151,20 +152,30 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         }
       }
 
-      // Get Twitter info from DB if not already on token
-      if (token.id && !token.twitterAccessToken) {
+      // Try to find user by email (which is more reliable than id)
+      if (token.email && !token.twitterAccessToken) {
         try {
+          console.log('Looking for Twitter tokens for email:', token.email);
           const userData = await db
             .select()
             .from(users)
-            .where(eq(users.id, token.id as string))
+            .where(eq(users.email, token.email as string))
             .limit(1);
 
           if (userData.length && userData[0].twitterAccessToken) {
+            console.log(
+              'Found Twitter data in database for user:',
+              userData[0].email
+            );
             token.twitterAccessToken = userData[0].twitterAccessToken;
             token.twitterRefreshToken = userData[0].twitterRefreshToken;
             token.twitterId = userData[0].twitterId;
             token.twitterUsername = userData[0].twitterUsername;
+          } else {
+            console.log(
+              'No Twitter data found for user with email:',
+              token.email
+            );
           }
         } catch (error) {
           console.error('Error fetching Twitter data for token:', error);
