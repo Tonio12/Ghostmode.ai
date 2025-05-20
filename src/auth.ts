@@ -108,6 +108,29 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     error: '/auth/error',
   },
   callbacks: {
+    async signIn({ user, account }) {
+      if (account?.provider === 'google') {
+        try {
+          const existingUser = await db
+            .select()
+            .from(users)
+            .where(eq(users.email, user.email!))
+            .limit(1);
+
+          if (!existingUser.length) {
+            await db.insert(users).values({
+              email: user.email!,
+              fullName: user.name!,
+              password: '',
+              lastActivityDate: new Date().toISOString().split('T')[0],
+            });
+          }
+        } catch (error) {
+          console.error('Error saving Google user:', error);
+        }
+      }
+      return true;
+    },
     async redirect({ url, baseUrl }) {
       if (url.startsWith(baseUrl)) return url;
       return `${baseUrl}/home`;
@@ -125,6 +148,26 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           token.accessTokenExpires = account.expires_at
             ? account.expires_at * 1000
             : 0;
+        }
+      }
+
+      // Get Twitter info from DB if not already on token
+      if (token.id && !token.twitterAccessToken) {
+        try {
+          const userData = await db
+            .select()
+            .from(users)
+            .where(eq(users.id, token.id as string))
+            .limit(1);
+
+          if (userData.length && userData[0].twitterAccessToken) {
+            token.twitterAccessToken = userData[0].twitterAccessToken;
+            token.twitterRefreshToken = userData[0].twitterRefreshToken;
+            token.twitterId = userData[0].twitterId;
+            token.twitterUsername = userData[0].twitterUsername;
+          }
+        } catch (error) {
+          console.error('Error fetching Twitter data for token:', error);
         }
       }
 
@@ -149,26 +192,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       session.accessToken = token.accessToken as string;
       session.refreshToken = token.refreshToken as string;
 
-      // Fetch twitter info from DB if not already on token
-      if (session.user?.id) {
-        try {
-          const dbUser = await db
-            .select()
-            .from(users)
-            .where(eq(users.id, session.user.id))
-            .limit(1);
-
-          if (dbUser.length) {
-            const u = dbUser[0];
-            session.twitterAccessToken = u.twitterAccessToken ?? undefined;
-            session.twitterRefreshToken = u.twitterRefreshToken ?? undefined;
-            session.twitterId = u.twitterId ?? undefined;
-            session.twitterUsername = u.twitterUsername ?? undefined;
-          }
-        } catch (e) {
-          console.error('Error fetching Twitter info for session', e);
-        }
-      }
+      // Add Twitter tokens to session
+      session.twitterAccessToken = token.twitterAccessToken as string;
+      session.twitterRefreshToken = token.twitterRefreshToken as string;
+      session.twitterId = token.twitterId as string;
+      session.twitterUsername = token.twitterUsername as string;
 
       return session;
     },

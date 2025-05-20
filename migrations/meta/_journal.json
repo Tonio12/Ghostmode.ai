@@ -22,6 +22,13 @@
       "when": 1747733357042,
       "tag": "0002_bouncy_madame_masque",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1747737629561,
+      "tag": "0003_melted_whiplash",
+      "breakpoints": true
     }
   ]
 }

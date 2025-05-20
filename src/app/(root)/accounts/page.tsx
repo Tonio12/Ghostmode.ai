@@ -103,7 +103,7 @@ export default function AccountsPage() {
             </div>
             {session?.twitterAccessToken && (
               <p className="text-sm text-muted-foreground">
-                Connected as {session.user?.twitterUsername}
+                Connected as {session.user?.name}
               </p>
             )}
           </div>

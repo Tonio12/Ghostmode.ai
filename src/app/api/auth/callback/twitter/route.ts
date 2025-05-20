@@ -47,17 +47,78 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Persist tokens & twitter profile
-    await db
-      .update(users)
-      .set({
+    // Check if user exists in DB before updating
+    try {
+      // Find user by email instead of ID
+      const userEmail = session.user?.email;
+
+      if (!userEmail) {
+        console.log("No email in session, can't find user");
+        return NextResponse.json(
+          { error: 'No email in session' },
+          { status: 400 }
+        );
+      }
+
+      console.log('Looking for user with email:', userEmail);
+
+      const userRecord = await db
+        .select()
+        .from(users)
+        .where(eq(users.email, userEmail))
+        .limit(1);
+
+      console.log('Found user in database:', {
+        exists: userRecord.length > 0,
+        email: userEmail,
+        dbId: userRecord.length ? userRecord[0].id : null,
+        sessionId: session.user.id,
+      });
+
+      // No matching user found
+      if (!userRecord.length) {
+        return NextResponse.json(
+          { error: 'User not found with this email' },
+          { status: 404 }
+        );
+      }
+
+      // Use the database ID, not session ID
+      const userId = userRecord[0].id;
+
+      // Persist tokens & twitter profile
+      console.log('Saving Twitter tokens to DB for user ID:', userId);
+      console.log('Twitter info:', {
         twitterId: twitterUser.id_str,
         twitterUsername: twitterUser.screen_name,
-        twitterAccessToken: accessToken,
-        twitterRefreshToken: accessSecret,
-        twitterAccessTokenExpires: null,
-      })
-      .where(eq(users.id, session.user.id));
+        accessTokenLength: accessToken?.length,
+      });
+
+      await db
+        .update(users)
+        .set({
+          twitterId: twitterUser.id_str,
+          twitterUsername: twitterUser.screen_name,
+          twitterAccessToken: accessToken,
+          twitterRefreshToken: accessSecret,
+          twitterAccessTokenExpires: null,
+        })
+        .where(eq(users.id, userId)); // Use DB ID
+
+      // Verify the update worked
+      const updatedUser = await db
+        .select()
+        .from(users)
+        .where(eq(users.id, userId))
+        .limit(1);
+
+      console.log('After update:', {
+        twitterSaved: !!updatedUser[0]?.twitterAccessToken,
+        tokenLength: updatedUser[0]?.twitterAccessToken?.length,
+      });
+    } catch (error) {
+      console.error('Error checking if user exists:', error);
+    }
 
     // Cleanup cookies
     const response = NextResponse.redirect(new URL('/accounts', request.url));
