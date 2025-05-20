@@ -14,6 +14,10 @@ declare module 'next-auth' {
   interface Session {
     accessToken?: string;
     refreshToken?: string;
+    twitterAccessToken?: string;
+    twitterRefreshToken?: string;
+    twitterId?: string;
+    twitterUsername?: string;
     user?: {
       id?: string;
       name?: string;
@@ -28,6 +32,10 @@ declare module 'next-auth' {
     accessToken?: string;
     refreshToken?: string;
     accessTokenExpires?: number;
+    twitterAccessToken?: string;
+    twitterRefreshToken?: string;
+    twitterId?: string;
+    twitterUsername?: string;
   }
 }
 
@@ -140,6 +148,27 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       // Add tokens to session
       session.accessToken = token.accessToken as string;
       session.refreshToken = token.refreshToken as string;
+
+      // Fetch twitter info from DB if not already on token
+      if (session.user?.id) {
+        try {
+          const dbUser = await db
+            .select()
+            .from(users)
+            .where(eq(users.id, session.user.id))
+            .limit(1);
+
+          if (dbUser.length) {
+            const u = dbUser[0];
+            session.twitterAccessToken = u.twitterAccessToken ?? undefined;
+            session.twitterRefreshToken = u.twitterRefreshToken ?? undefined;
+            session.twitterId = u.twitterId ?? undefined;
+            session.twitterUsername = u.twitterUsername ?? undefined;
+          }
+        } catch (e) {
+          console.error('Error fetching Twitter info for session', e);
+        }
+      }
 
       return session;
     },

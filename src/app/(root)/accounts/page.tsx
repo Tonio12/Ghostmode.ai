@@ -11,9 +11,23 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Twitter } from 'lucide-react';
 
 export default function AccountsPage() {
   const { data: session } = useSession();
+
+  const handleTwitterConnect = async () => {
+    try {
+      const response = await fetch('/api/auth/twitter');
+      const data = await response.json();
+
+      if (data.url) {
+        window.location.href = data.url;
+      }
+    } catch (error) {
+      console.error('Failed to connect Twitter:', error);
+    }
+  };
 
   return (
     <div className="container mx-auto py-8">
@@ -64,6 +78,32 @@ export default function AccountsPage() {
             {session?.accessToken && (
               <p className="text-sm text-muted-foreground">
                 Connected as {session.user?.email}
+              </p>
+            )}
+          </div>
+
+          {/* Twitter Connection */}
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <Twitter className="h-5 w-5 text-[#1DA1F2]" />
+                <span>Twitter</span>
+              </div>
+              {session?.twitterAccessToken ? (
+                <Badge variant="success">Connected</Badge>
+              ) : (
+                <Button
+                  onClick={handleTwitterConnect}
+                  variant="outline"
+                  size="sm"
+                >
+                  Connect
+                </Button>
+              )}
+            </div>
+            {session?.twitterAccessToken && (
+              <p className="text-sm text-muted-foreground">
+                Connected as {session.user?.twitterUsername}
               </p>
             )}
           </div>

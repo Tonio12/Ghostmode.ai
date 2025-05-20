@@ -7,9 +7,10 @@ export const config = {
       secret: process.env.GOOGLE_CLIENT_SECRET!,
     },
     twitter: {
-      id: process.env.TWITTER_API_KEY!,
-      secret: process.env.TWITTER_API_SECRET!,
+      id: process.env.NEXT_PUBLIC_TWITTER_ID!,
+      secret: process.env.TWITTER_SECRET!,
     },
     deepSeekApiKey: process.env.DEEPSEEK_API_KEY!,
+    callbackUrl: process.env.CALLBACK_URL!,
   },
 };
